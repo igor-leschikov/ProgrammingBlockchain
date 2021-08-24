@@ -1,14 +1,14 @@
-﻿## Spend your coin {#spend-your-coin}
+﻿## Потратить монету {#spend-your-coin}
 
-So now that you know what a **bitcoin address**, a **ScriptPubKey**, a **private key** and a **miner** are, you will make your first **transaction** by hand.
+Итак, теперь, когда вы знаете, что такое **биткойн-адрес**, **ScriptPubKey**, **закрытый ключ** и **майнер**, вы совершите свою первую **транзакцию** вручную.
 
-As you proceed through this lesson you will add code line by line as it is presented to build a method that will leave feedback for the book in a Twitter style message. I _highly recommend_ you to follow the instructions first on the TestNet and after do them again on the Main Bitcoin network.
+По мере прохождения этого урока вы будете добавлять код построчно, поскольку он представлен, чтобы создать метод, который оставит отзыв о книге в виде сообщения в стиле Twitter. Я _настоятельно рекомендую_ вам сначала следовать инструкциям в TestNet, а затем повторить их снова в основной сети Биткойн. 
 
-Let’s start by looking at the **transaction** that contains the **TxOut** that you want to spend as we did previously:
+Давайте начнем с рассмотрения **транзакции**, содержащей **TxOut**, который вы хотите потратить, как мы делали ранее:
 
-Create a new **Console Project** \(&gt;.net45\) and install **QBitNinja.Client** NuGet.
+Создайте новый **Console Project** \(&gt;.net45\)  и установите NuGet-пакет **QBitNinja.Client**.
 
-Have you already generated and noted down a private key yourself? Did you already get the corresponding bitcoin address and sent some funds there? If not, don't worry, I quickly reiterate how you can do it:
+Вы уже сами сгенерировали и записали закрытый ключ? Вы уже получили соответствующий биткойн-адрес и отправили туда средства? Если нет, не волнуйтесь, я быстро повторю, как вы можете это сделать:
 
 ```cs
 // Replace this with Network.Main to do this on Bitcoin MainNet
@@ -24,7 +24,7 @@ Console.WriteLine(address);
 
 Note that we use the TestNet first, but you will probably do this on the MainNet as well, so you are going to spend real money! In any case, write down the **bitcoinPrivateKey** and the address! Send a few dollars of coins there and save the transaction ID \(you can find it in your wallet software or with a blockexplorer, like SmartBit for [MainNet](http://smartbit.com.au/) and [TestNet](https://testnet.smartbit.com.au/)).
 
-Import your private key (replace the "cN5Y...K2RS" string with yours):
+Импортируйте свой закрытый ключ (замените строку «cN5Y ... K2RS» на свою):
 
 ```cs
 var bitcoinPrivateKey = new BitcoinSecret("cN5YQMWV8y19ntovbsZSaeBxXaVPaK4n7vapp4V56CKx5LhrK2RS", Network.Testnet);
@@ -35,7 +35,7 @@ Console.WriteLine(bitcoinPrivateKey); // cN5YQMWV8y19ntovbsZSaeBxXaVPaK4n7vapp4V
 Console.WriteLine(address); // mkZzCmjAarnB31n5Ke6EZPbH64Cxexp3Jp
 ```
 
-And finally get the transaction info (replace the "0acb...b78a" with the one you got from your wallet software or blockchain explorer after you sent the coins):
+И, наконец, получите информацию о транзакции (замените «0acb ... b78a» на тот, который вы получили из программного обеспечения вашего кошелька или проводника блокчейна после того, как вы отправили монеты):
 
 ```cs
 var client = new QBitNinjaClient(network);
@@ -46,11 +46,11 @@ Console.WriteLine(transactionResponse.TransactionId); // 0acb6e97b228b838049ffbd
 Console.WriteLine(transactionResponse.Block.Confirmations); // 91
 ```
 
-Now we have every bit of information we need to create our transactions. The main questions are: **from where, to where and how much?**
+Теперь у нас есть вся необходимая информация для создания наших транзакций. Основные вопросы: **откуда, куда и сколько?**
 
-### From where?
+### Откуда?
 
-In our case, we want to spend the second outpoint. Here's how we have figured this out:
+В нашем случае мы хотим потратить второй аутпоинт. Вот как мы это выяснили:
 
 ```cs
 var receivedCoins = transactionResponse.ReceivedCoins;
@@ -67,7 +67,7 @@ if(outPointToSpend == null)
 Console.WriteLine("We want to spend {0}. outpoint:", outPointToSpend.N + 1);
 ```
 
-For the payment you will need to reference this outpoint in the transaction. You create a transaction as follows:
+Для оплаты вам необходимо указать этот аутпоинт в транзакции. Вы создаете транзакцию следующим образом:
 
 ```cs
 var transaction = Transaction.Create(network);
@@ -77,35 +77,35 @@ transaction.Inputs.Add(new TxIn()
 });
 ```
 
-### To where?
+### Куда?
 
-Do you remember the main questions? **From where, to where and how much?**  
-Constructing the **TxIn** and adding it to the transaction is the answer to the "from where" question.  
-Constructing the **TxOut** and adding it to the transaction is the answer to the remaining ones.
+Вы помните основные вопросы? ** Откуда, куда и сколько? **
+Создание **TxIn** и добавление его к транзакции - это ответ на вопрос «откуда». 
+Создание **TxOut** и добавление его к транзакции - это ответ на оставшиеся.
 
 > The donation address of this book is: [1KF8kUVHK42XzgcmJF4Lxz4wcL5WDL97PB](https://www.smartbit.com.au/address/1KF8kUVHK42XzgcmJF4Lxz4wcL5WDL97PB)  
 This money goes into Nicolas' "Coffee and Sushi Wallet" that will keep him fed and compliant while writing the rest of the book.  
 If you succeed in completing this challenge on the MainNet you will be able to find your contribution among the **Hall of the Makers** on [http://n.bitcoin.ninja/](http://n.bitcoin.ninja/) \(ordered by generosity\).
 
-To get our MainNet address:
+Чтобы получить наш адрес MainNet:
 ```cs
 var hallOfTheMakersAddress = new BitcoinPubKeyAddress("1KF8kUVHK42XzgcmJF4Lxz4wcL5WDL97PB", Network.Main);
 ```
 
-Or if you are working on TestNet, send the TestNet coins to any address. I used [mzp4No5cmCXjZUpf112B1XWsvWBfws5bbB](https://testnet.smartbit.com.au/address/mzp4No5cmCXjZUpf112B1XWsvWBfws5bbB).
+Или, если Вы работаете в TestNet, отправьте монеты TestNet на любой адрес. Я использовал [mzp4No5cmCXjZUpf112B1XWsvWBfws5bbB] (https://testnet.smartbit.com.au/address/mzp4No5cmCXjZUpf112B1XWsvWBfws5bbB).
 
 ```cs
 var hallOfTheMakersAddress = BitcoinAddress.Create("mzp4No5cmCXjZUpf112B1XWsvWBfws5bbB", Network.TestNet);
 ```
 
-### How much?
+### Сколько?
 
-Bitcoin has [several units to use](https://en.bitcoin.it/wiki/Units), but there are three you should know about: bitcoins, bits and satoshis. 1 bitcoin (BTC) is 1,000,000 bits and 100 satoshis are 1 bit. 1 satoshi (sat) is the smallest unit on the Bitcoin network.  
+Биткойн имеет [несколько единиц для использования] (https://en.bitcoin.it/wiki/Units), но есть три, о которых вам следует знать: биткойны, биты и сатоши. 1 биткойн (BTC) равен 1,000,000 бит, а 100 сатоши - это 1 бит. 1 сатоши (сат) - это самая маленькая единица в сети Биткойн.  
 
-If you want to send **0.0004 BTC** (a few dollars) from an **unspent output**, which holds **0.001 BTC**, you actually have to spend it all!  
-As the diagram shows below, your **transaction output** specifies  **0.0004 BTC** to [Hall of The Makers](http://n.bitcoin.ninja/) and **0.00053 BTC** back to you.  
-What happens to the remaining **0.00007 BTC**? This is the _miner fee_.  
-The miner fee incentivizes the miners to add this transaction into their next block. The higher the miner fee the more motivated the miner is to include your transaction in the next block, meaning that your transaction will be confirmed faster. If you set the miner fee to zero, your transaction might never be confirmed.
+Если Вы хотите отправить **0,0004 BTC** (несколько долларов) из **неизрасходованного вывода**, который содержит **0,001 BTC**, Вам на самом деле придется потратить все это!
+Как показано на диаграмме ниже, ваш **выход транзакции** указывает **0,0004 BTC** на [Hall of The Makers](http://n.bitcoin.ninja/) и **0,00053 BTC** обратно к Вам. 
+Что будет с оставшимися **0,00007 BTC**? Это плата майнерам. 
+Комиссия майнера побуждает майнеров добавить эту транзакцию в свой следующий блок. Чем выше комиссия майнера, тем больше у него мотивации для включения Вашей транзакции в следующий блок, а это означает, что Ваша транзакция будет подтверждена быстрее. Если Вы установите нулевую комиссию майнера, Ваша транзакция возможно никогда не будет подтверждена.
 
 ![](../assets/SpendTx.png)
 
@@ -115,7 +115,7 @@ transaction.Outputs.Add(Money.Coins(0.0004m), hallOfTheMakersAddress.ScriptPubKe
 transaction.Outputs.Add(new Money(0.00053m, MoneyUnit.BTC), bitcoinPrivateKey.ScriptPubKey);
 ```
 
-We can do some fine tuning here, let's calculate the change based on the miner fee.  
+Здесь мы можем сделать некоторую тонкую настройку, давайте посчитаем изменение на основе комиссии майнера.  
 
 ```cs
 // How much you want to spend
@@ -133,7 +133,7 @@ var txInAmount = (Money)receivedCoins[(int) outPointToSpend.N].Amount;
 var changeAmount = txInAmount - hallOfTheMakersAmount - minerFee;
 ```
 
-Let's use our calculated values for our TxOuts instead:
+Давайте вместо этого будем использовать наши вычисленные значения для нашего TxOuts:
 
 ```cs
 transaction.Outputs.Add(hallOfTheMakersAmount, hallOfTheMakersAddress.ScriptPubKey);
@@ -141,10 +141,10 @@ transaction.Outputs.Add(hallOfTheMakersAmount, hallOfTheMakersAddress.ScriptPubK
 transaction.Outputs.Add(changeAmount, bitcoinPrivateKey.ScriptPubKey);
 ```
 
-### Message on The Blockchain
+### Сообщение в блокчейне
 
-Now add your personal feedback! This must be less than or equal to 80 bytes or your transaction will get rejected.  
-This message along with your transaction will appear \(after your transaction is confirmed\) in the [Hall of The Makers](http://n.bitcoin.ninja/)! :)
+А теперь добавьте свой личный отзыв! Он должен быть меньше или равен 80 байтам, иначе ваша транзакция будет отклонена.  
+Это сообщение вместе с вашей транзакцией появится \(после подтверждения транзакции\) в [Hall of The Makers](http://n.bitcoin.ninja/)! :)
 
 ```cs
 var message = "Long live NBitcoin and its makers!";
@@ -152,9 +152,9 @@ var bytes = Encoding.UTF8.GetBytes(message);
 transaction.Outputs.Add(Money.Zero, TxNullDataTemplate.Instance.GenerateScriptPubKey(bytes));
 ```
 
-### Summary
-To sum up, let's take a look at the whole transaction before we sign it:  
-We have 3 **TxOut**, 2 with **value**, 1 without **value** \(which contains the message\). You can notice the differences between the **scriptPubKey**s of the "normal" **TxOut**s and the **scriptPubKey** of the **TxOut** within the message:
+### Резюме
+Подводя итог, давайте посмотрим на всю транзакцию, прежде чем мы ее подпишем: 
+У нас есть 3 **TxOut**, 2 с **количеством**, 1 без **количества** \(которое содержит сообщение\). Вы можете заметить различия между **scriptPubKey** в "обычных" **TxOut** и **scriptPubKey** в **TxOut** в сообщении:
 
 ```json
 {
@@ -190,20 +190,21 @@ We have 3 **TxOut**, 2 with **value**, 1 without **value** \(which contains the 
 }
 ```
 
-Take a closer look at **TxIn**. We have **prev\_out** and **scriptSig** there.  
-**Exercise:** try to figure out what **scriptSig** will be and how to get it in our code before you read further!
+Присмотритесь к **TxIn**. У нас есть **prev\_out** и **scriptSig**
+**Упражнение:** попробуйте выяснить, каким будет **scriptSig** и как получить его в нашем коде, прежде чем читать дальше!
 
-Let's check out the **hash** of **prev\_out** in a TestNet blockexplorer: [prev\_out tx details](https://testnet.smartbit.com.au/tx/0acb6e97b228b838049ffbd528571c5e3edd003f0ca8ef61940166dc3081b78a).  You can see that 0.001 BTC was transferred to our address.
+Давайте проверим **хэш** из **prev\_out** в блокэксплорере TestNet: [prev\_out tx details](https://testnet.smartbit.com.au/tx/0acb6e97b228b838049ffbd528571c5e3edd003f0ca8ef61940166dc3081b78a).  Как видите, на наш адрес было переведено 0,001 BTC.
 
-In **prev\_out** **n** is 0. Since we are indexing from 0, this means that we want to spend the first output of the transaction (the second one is the 1.0989548 BTC change from the transaction).  
+In **prev\_out** **n** is 0. Since we are indexing from 0, this means that we want to spend the first output of the transaction (the second one is the 1.0989548 BTC change from the transaction). 
+В **prev \ _out** **n** равно 0. Поскольку мы индексируем с 0, это означает, что мы хотим потратить первый вывод транзакции (второй - изменение 1.0989548 BTC из транзакции).
 
-### Sign your transaction
+### Подпишите транзакцию
 
-Now that we have created the transaction, we must sign it. In other words, you will have to prove that you own the TxOut that you referenced in the input.
+Теперь, когда мы создали транзакцию, мы должны ее подписать. Другими словами, вам нужно будет доказать, что вы владеете TxOut, на который вы ссылались во входных данных.
 
-Signing can be [complicated](https://en.bitcoin.it/w/images/en/7/70/Bitcoin_OpCheckSig_InDetail.png), but we’ll make it simple.
+Подписание может быть [сложным](https://en.bitcoin.it/w/images/en/7/70/Bitcoin_OpCheckSig_InDetail.png), но мы сделаем это проще.
 
-First let's revisit the **scriptSig** of **in** and how we can get it from code. We have two options to fill the ScriptSig with the ScriptPubKey of our address:
+Сначала давайте вернемся к **scriptSig** из **in** и как мы можем получить его из кода. У нас есть два варианта заполнения ScriptSig ключом ScriptPubKey нашего адреса:
 
 ```cs
 // Get it from the public address
@@ -215,14 +216,14 @@ var bitcoinPrivateKey = new BitcoinSecret("cN5YQMWV8y19ntovbsZSaeBxXaVPaK4n7vapp
 transaction.Inputs[0].ScriptSig =  bitcoinPrivateKey.ScriptPubKey;
 ```
 
-Then you need to provide your private key in order to sign the transaction:
+Затем необходимо предоставить Ваш закрытый ключ, чтобы подписать транзакцию:
 
 ```cs
 transaction.Sign(bitcoinPrivateKey, receivedCoins.ToArray());
 ```
-After this command the ScriptSig property of the input will be replaced by the signature, making the transaction signed.  
+После этой команды свойство ScriptSig будет заменено подписью, что сделает транзакцию подписанной. 
 
-You can check out our TestNet transaction on the blockchain explorer [here](https://testnet.smartbit.com.au/tx/eeffd48b317e7afa626145dffc5a6e851f320aa8bb090b5cd78a9d2440245067).
+Вы можете проверить нашу транзакцию [TestNet в проводнике блокчейна](https://testnet.smartbit.com.au/tx/eeffd48b317e7afa626145dffc5a6e851f320aa8bb090b5cd78a9d2440245067).
 
 ### Propagate your transactions
 
@@ -240,7 +241,7 @@ if (!broadcastResponse.Success)
 }
 else
 {
-    Console.WriteLine("Success! You can check out the hash of the transaciton in any block explorer:");
+    Console.WriteLine("Успех! Вы можете проверить хэш транзакции в любом проводнике блоков:");
     Console.WriteLine(transaction.GetHash());
 }
 ```
@@ -248,7 +249,7 @@ else
 #### With your own Bitcoin Core:
 
 ```cs
-using (var node = Node.ConnectToLocal(network)) //Connect to the node
+using (var node = Node.ConnectToLocal(network)) //Подключиться к узлу
 {
     node.VersionHandshake(); //Say hello
                              //Advertize your transaction (send just the hash)
